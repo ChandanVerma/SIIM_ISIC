@@ -26,6 +26,7 @@ def main(hparams):
         early_stop_callback = early_stop_callback,
         #accumulate_grad_batches=hparams['accumulate_grad_batches'],
         #train_percent_check = hparams['train_percent_check']
+        profiler = True
         )
 
     ## start training

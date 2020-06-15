@@ -1,0 +1,34 @@
+model_params:
+    model: siim_model
+
+args:
+    exp_dir: src
+    logdir: logs
+    verbose: True
+
+stages:
+    data_params:
+        batch_size: 64
+        num_workers: 0
+        train_dir: "/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/data/processed/data/train/"
+        valid_size: 0.2
+        loader_params:
+            valid:
+            batch_size: 128
+
+    state_params:
+        num_epochs: 3
+        main_metric: auc
+        minimize_metric: False
+
+    criterion_params:
+        criterion: CrossEntropyLoss
+
+    optimizer_params:
+        optimizer: Adam
+
+    callbacks_params:
+        auc:
+            callback: AUCCallback
+    
+    stage1: {}

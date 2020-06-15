@@ -6,10 +6,8 @@ import sys
 import yaml
 
 def load_config(file_path):
-
     with open(file_path, 'r') as f:
         cfg = yaml.load(f)
-
     return cfg
 
 cfg = load_config('/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/config.yml')

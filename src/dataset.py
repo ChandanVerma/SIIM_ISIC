@@ -27,14 +27,8 @@ from datetime import datetime
 from collections import OrderedDict
 import yaml
 from pytorch_lightning import seed_everything
+from src.utils import load_config
 seed_everything(2020)
-
-def load_config(file_path):
-
-    with open(file_path, 'r') as f:
-        cfg = yaml.load(f)
-
-    return cfg
 
 cfg = load_config('/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/config.yml')
 

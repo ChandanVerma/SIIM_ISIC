@@ -14,14 +14,7 @@ import yaml
 from datetime import datetime
 from src.models.se_resnext import siim_Model
 from src.dataset import train_dataset, val_dataset
-from src.utils import checkpoint_callback, early_stop_callback, neptune_logger
-
-def load_config(file_path):
-
-    with open(file_path, 'r') as f:
-        cfg = yaml.load(f)
-
-    return cfg
+from src.utils import checkpoint_callback, early_stop_callback, neptune_logger, load_config
 
 cfg = load_config('/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/config.yml')
 hparams = cfg['neptune_logger']['logging_params']

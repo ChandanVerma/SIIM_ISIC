@@ -2,17 +2,10 @@ from pytorch_lightning import Trainer
 from src.models.se_resnext import siim_Model
 from src.dataset import train_dataset, val_dataset
 from src.utils import checkpoint_callback, early_stop_callback, neptune_logger
-#from sklearn.model_selection import StratifiedKFold, GroupKFold, KFold
+from src.utils import load_config
 import yaml
 from pytorch_lightning import seed_everything
 seed_everything(2020)
-
-def load_config(file_path):
-
-    with open(file_path, 'r') as f:
-        cfg = yaml.load(f)
-
-    return cfg
 
 cfg = load_config('/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/config.yml')
 

@@ -14,10 +14,11 @@ import yaml
 from datetime import datetime
 from src.models.se_resnext import siim_Model
 from src.dataset import train_dataset, val_dataset
-from src.utils import checkpoint_callback, early_stop_callback, neptune_logger, load_config
+from src.utils import checkpoint_callback, early_stop_callback, neptune_logger
+from src.utils import load_config, dict_to_args
 
 cfg = load_config('/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/config.yml')
-hparams = cfg['neptune_logger']['logging_params']
+hparams = dict_to_args(cfg['neptune_logger']['logging_params'])
 
 model = siim_Model(train_dataset = train_dataset, val_dataset= val_dataset, logger = neptune_logger, hparams = hparams)
 

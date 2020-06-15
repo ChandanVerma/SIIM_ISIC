@@ -10,7 +10,7 @@ neptune_logger:
         max_epochs : 10
         num_classes : 1
         gpus : 1
-        batch_size : 16 
+        batch_size : 32 
         use_16bit : True
         distributed_backend : 'dp'
         train_percent_check : 0.1
@@ -19,7 +19,7 @@ neptune_logger:
         lr : 0.02
         base_learning_rate : 0.0001
         optimizer_name : 'RAdam' 
-        model_name : densenet121
+        model_name : resnet34
         momentum : 0.9
         epochs : 10
         image_size : 512
@@ -37,13 +37,13 @@ neptune_logger:
         verbose : True
         monitor : 'auc'
         mode : 'max'
-        prediction_model_name : epoch=4_v0
+        prediction_model_name : epoch=0
     
     early_stop_params:
-        monitor : 'auc'
+        monitor : 'accuracy'
         min_delta : 0.0
         patience : 3
         verbose : False
-        mode : 'max'
+        mode : 'auto'
 
         

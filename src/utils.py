@@ -4,6 +4,7 @@ from pytorch_lightning.loggers import NeptuneLogger
 from torchvision.transforms import transforms
 import sys
 import yaml
+import argparse
 
 def load_config(file_path):
     with open(file_path, 'r') as f:
@@ -36,3 +37,22 @@ neptune_logger = NeptuneLogger(
     experiment_name = cfg['neptune_logger']['api_params']['experiment_name'],
     close_after_fit = cfg['neptune_logger']['api_params']['close_after_fit']
 ) 
+
+def dict_to_args(d):
+
+    args = argparse.Namespace()
+
+    def dict_to_args_recursive(args, d, prefix=''):
+        for k, v in d.items():
+            if type(v) == dict:
+                dict_to_args_recursive(args, v, prefix=k)
+            elif type(v) in [tuple, list]:
+                continue
+            else:
+                if prefix:
+                    args.__setattr__(prefix + '_' + k, v)
+                else:
+                    args.__setattr__(k, v)
+
+    dict_to_args_recursive(args, d)
+    return args

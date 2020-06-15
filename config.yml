@@ -1,0 +1,49 @@
+neptune_logger:
+
+    api_params:
+        api_key : 'eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiNTY2Yjc2MDgtY2M3MC00MDVhLWFjYjAtMmI3MTdlNGViNDg4In0='
+        project_name : "chandanv/Kaggle-SIIM-ISIC"
+        experiment_name : "ISIC"  
+        close_after_fit : False
+    
+    logging_params:
+        max_epochs : 10
+        num_classes : 1
+        gpus : 1
+        batch_size : 16 
+        use_16bit : True
+        distributed_backend : 'dp'
+        train_percent_check : 0.1
+        pretrained : True
+        accumulate_grad_batches: 1
+        lr : 0.02
+        base_learning_rate : 0.0001
+        optimizer_name : 'RAdam' 
+        model_name : densenet121
+        momentum : 0.9
+        epochs : 10
+        image_size : 512
+        augmentation : simple
+        loss : 'binary_cross_entropy_with_logits'
+        schedular : 'CosineAnnealingLR'
+        data_dir : '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/data/processed/data/'
+        artifacts_dir : '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/artifacts/'
+        submission_dir: '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/submissions/'
+    
+    model_checkpoint_params:
+        models_save_path : '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/models/'
+        save_weights_only : True
+        save_top_k : 4
+        verbose : True
+        monitor : 'auc'
+        mode : 'max'
+        prediction_model_name : epoch=4_v0
+    
+    early_stop_params:
+        monitor : 'auc'
+        min_delta : 0.0
+        patience : 3
+        verbose : False
+        mode : 'max'
+
+        

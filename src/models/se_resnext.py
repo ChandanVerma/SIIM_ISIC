@@ -9,9 +9,10 @@ import torch.nn as nn
 import torch.nn.functional as F 
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import transforms
-
+import geffnet
 from geffnet import create_model
 
+from pytorch_transformers import WarmupCosineWithHardRestartsSchedule
 import pytorch_lightning as pl 
 from pytorch_lightning import seed_everything
 from pytorch_lightning import _logger as log 
@@ -32,8 +33,8 @@ class siim_Model(pl.LightningModule):
         self.val_dataset = val_dataset
         self.logger = logger 
 
-        self.model = create_model(self.hparams.model_name, num_classes = self.hparams.num_classes)
-        #self.model.global_pool = GeM()
+        self.model = create_model(self.hparams.model_name, pretrained= self.hparams.pretrained, num_classes = self.hparams.num_classes)
+        self.model.global_pool = GeM()
                        
 
     def forward(self, x):
@@ -58,9 +59,8 @@ class siim_Model(pl.LightningModule):
 #        
     def configure_optimizers(self):
         model = self.model
-        optimizer = torch.optim.Adam(model.parameters(), lr= self.hparams.lr)
-
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer=optimizer, mode='max', patience=1, verbose=True, factor=0.2)
+        optimizer = torch.optim.AdamW(model.parameters(), lr= self.hparams.lr)
+        scheduler = WarmupCosineWithHardRestartsSchedule(optimizer=optimizer, warmup_steps= 1, t_total = 5)
                                                                
         return [optimizer], [scheduler]        
 #

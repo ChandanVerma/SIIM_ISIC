@@ -10,24 +10,24 @@ neptune_logger:
         max_epochs : 10
         num_classes : 1
         gpus : 1
-        batch_size : 24 
+        batch_size : 32 
         use_16bit : True
         distributed_backend : 'dp'
         train_percent_check : 0.1
-        pretrained : False
+        pretrained : True
         accumulate_grad_batches: 1
         gradient_clip_val : 1
-        lr : 0.00001
+        lr : 0.001
         base_learning_rate : 0.0001
-        optimizer_name : 'Adam' 
-        model_name : efficientnet_b8
+        optimizer_name : 'AdamW' 
+        model_name : tf_efficientnet_b7_ns
         momentum : 0.9
         epochs : 10
-        image_size : 512
-        augmentation : simple
+        image_size : 256
+        augmentation : hard
         loss : 'binary_cross_entropy_with_logits'
-        schedular : 'ReduceLROnPlateau'
-        data_dir : '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/data/processed/data_512/'
+        schedular : 'WarmupCosineWithHardRestartsSchedule'
+        data_dir : '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/data/processed/data_256/'
         artifacts_dir : '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/artifacts/'
         submission_dir: '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/submissions/'
     
@@ -38,7 +38,7 @@ neptune_logger:
         verbose : True
         monitor : 'auc'
         mode : 'max'
-        prediction_model_name : epoch=2_v0
+        prediction_model_name : epoch=2_v1
     
     early_stop_params:
         monitor : 'auc'

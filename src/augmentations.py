@@ -2,9 +2,10 @@ from torchvision.transforms import transforms
 
 def hard_augment():
     hard_augment_ = transforms.Compose([
-                      #transforms.ToPILImage(),
-                      #transforms.Resize((300, 300)),
-                      transforms.RandomCrop((224, 224)),
+                      transforms.RandomRotation(degrees = 0),
+                      transforms.RandomRotation(degrees = 90),
+                      transforms.RandomRotation(degrees = 180),
+                      transforms.RandomRotation(degrees = 270),
                       transforms.RandomHorizontalFlip(p=0.5),
                       transforms.RandomVerticalFlip(p=0.5),
                       transforms.ToTensor(),

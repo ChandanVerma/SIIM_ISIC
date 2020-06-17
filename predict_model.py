@@ -30,7 +30,7 @@ new_model = model.load_from_checkpoint(checkpoint_path = PATH,
                                        hparams = hparams)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-model.to(device)
+new_model.to(device)
 
 def prediction(test_img_path, model, device):
     id_list = []
@@ -53,8 +53,7 @@ def prediction(test_img_path, model, device):
             img = ImageTransform(img)
             img = img.unsqueeze(0)
             img = img.to(device)
-            #print('Image shape', img.shape)
-            # Predict  ##############################################
+            
             model.eval()
 
             outputs = model(img)
@@ -82,5 +81,5 @@ def prediction(test_img_path, model, device):
 
 
 file_name = '{}_{}'.format(cfg['neptune_logger']['logging_params']['model_name'], datetime.now())
-submission = prediction(os.path.join(cfg['neptune_logger']['logging_params']['data_dir'], 'test/'), model, device)
+submission = prediction(os.path.join(cfg['neptune_logger']['logging_params']['data_dir'], 'test/'), new_model, device)
 submission.to_csv(os.path.join(cfg['neptune_logger']['logging_params']['submission_dir'], f'{file_name}.csv'), index = False)

@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import transforms
 
-from cnn_finetune import make_model
+from geffnet import create_model
 
 import pytorch_lightning as pl 
 from pytorch_lightning import seed_everything
@@ -18,7 +18,8 @@ from pytorch_lightning import _logger as log
 from pytorch_lightning.core import LightningModule
 
 import torch_optimizer as optim
-
+from src.generalized_mean_pooling import GeM
+from src.dataset import train_sampler, val_sampler
 ## fixing random seed
 seed_everything(2020)
 
@@ -31,47 +32,35 @@ class siim_Model(pl.LightningModule):
         self.val_dataset = val_dataset
         self.logger = logger 
 
-
-        def make_classifier(in_features, num_classes):
-            return nn.Sequential(
-                nn.Linear(in_features, 4096),
-                nn.ReLU(inplace=True),
-                nn.Linear(4096, self.hparams.num_classes),
-            )
-
-        self.model = make_model(self.hparams.model_name, self.hparams.num_classes, 
-                       pretrained = self.hparams.pretrained, 
-                       input_size=(self.hparams.image_size, self.hparams.image_size), 
-                       pool=nn.AdaptiveMaxPool2d(1),
-                       dropout_p= 0.5,
-                       classifier_factory= make_classifier)
+        self.model = create_model(self.hparams.model_name, num_classes = self.hparams.num_classes)
+        #self.model.global_pool = GeM()
+                       
 
     def forward(self, x):
         bs, _, _, _ = x.shape
-        x = self.model._features(x)
-        x = F._adaptive_max_pool2d(x, 1).reshape(bs, -1)
-        x = F.dropout(x, p = 0.5)
-        x = self.model._classifier(x)
+
+        x = self.model(x)
+
+        # x = self.model._features(x)
+        # x = F._adaptive_max_pool2d(x, 1).reshape(bs, -1)
+        # x = F.dropout(x, p = 0.5)
+        # x = self.model._classifier(x)
         return x
 # 
     # training setup
     def train_dataloader(self):
         log.info('Training data loader called.')
-        return DataLoader(self.train_dataset, batch_size = self.hparams.batch_size, shuffle = True, drop_last= True, num_workers= 10)
+        return DataLoader(self.train_dataset, batch_size = self.hparams.batch_size, sampler = train_sampler, shuffle = False, drop_last= True, num_workers= 10)
 # 
     def val_dataloader(self):
         log.info('Validation data loader called.')
-        return DataLoader(self.val_dataset, batch_size = self.hparams.batch_size, shuffle= False, drop_last= True, num_workers= 10)
+        return DataLoader(self.val_dataset, batch_size = self.hparams.batch_size, sampler = val_sampler, shuffle= False, drop_last= True, num_workers= 10)
 #        
     def configure_optimizers(self):
         model = self.model
-        optimizer = torch.optim.AdamW([
-                                       {"params": model._features.parameters(), "lr": self.hparams.base_learning_rate},
-                                       {"params": model._classifier.parameters(), "lr": self.hparams.lr},
-                                      ],
-                                      lr=5e-4,)
+        optimizer = torch.optim.Adam(model.parameters(), lr= self.hparams.lr)
 
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size = 2, gamma = 0.1)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer=optimizer, mode='max', patience=1, verbose=True, factor=0.2)
                                                                
         return [optimizer], [scheduler]        
 #
@@ -80,7 +69,7 @@ class siim_Model(pl.LightningModule):
         output = self.forward(inputs)
         target = target.type(torch.FloatTensor).unsqueeze(1).cuda()
         loss = F.binary_cross_entropy_with_logits(output, target)
-        self.logger.experiment.log_metric('train_loss', loss.item())
+        self.logger.experiment.log_metric('loss', loss.item())
         return {'loss': loss}
 # 
     def validation_step(self, batch, batch_idx):

@@ -22,9 +22,9 @@ def main(hparams):
         distributed_backend = hparams.distributed_backend,
         precision = 16 if hparams.use_16bit else 32,
         checkpoint_callback= checkpoint_callback,
-        logger = neptune_logger, 
+        logger = neptune_logger,
+        gradient_clip_val= hparams.gradient_clip_val,
         early_stop_callback = early_stop_callback,
-        profiler = True
         )
 
     ## start training
@@ -33,6 +33,7 @@ def main(hparams):
 if __name__ == '__main__':
 
     hparams = dict_to_args(cfg['neptune_logger']['logging_params'])
+    neptune_logger.experiment.log_artifact(cfg['neptune_logger']['logging_params']['artifacts_dir'])    
     main(hparams)
-    neptune_logger.experiment.log_artifact(cfg['neptune_logger']['logging_params']['artifacts_dir'])
     neptune_logger.experiment.stop()
+    

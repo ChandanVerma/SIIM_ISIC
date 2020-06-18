@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore')
 from pytorch_lightning import Trainer
 from src.models.se_resnext import siim_Model
 from src.dataset import train_dataset, val_dataset
@@ -16,14 +18,15 @@ def main(hparams):
 
     ## init trainer
     trainer = Trainer(
+        #resume_from_checkpoint= '/home/chandanv/Drive/Competitions/Kaggle/SIIM/SIIM_ISIC/models/epoch=3.ckpt',
         max_epochs = hparams.epochs,
         gpus = hparams.gpus,
         batch_size = hparams.batch_size, 
-        distributed_backend = hparams.distributed_backend,
+        #distributed_backend = hparams.distributed_backend,
         precision = 16 if hparams.use_16bit else 32,
         checkpoint_callback= checkpoint_callback,
         logger = neptune_logger,
-        gradient_clip_val= hparams.gradient_clip_val,
+        #gradient_clip_val= hparams.gradient_clip_val,
         early_stop_callback = early_stop_callback,
         )
 

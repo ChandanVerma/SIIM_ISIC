@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import transforms
 import geffnet
 from geffnet import create_model
-
+from src.loss_functions import AUCLoss
 from pytorch_transformers import WarmupCosineWithHardRestartsSchedule
 import pytorch_lightning as pl 
 from pytorch_lightning import seed_everything
@@ -68,7 +68,7 @@ class siim_Model(pl.LightningModule):
         inputs, target = batch
         output = self.forward(inputs)
         target = target.type(torch.FloatTensor).unsqueeze(1).cuda()
-        loss = F.binary_cross_entropy_with_logits(output, target)
+        loss = nn.BCEWithLogitsLoss()(output, target)
         self.logger.experiment.log_metric('loss', loss.item())
         return {'loss': loss}
 # 
